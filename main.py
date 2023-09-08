@@ -1,8 +1,9 @@
 import re
 import csv
-from pprint import pprint
+import os
+from decorator import logger2
 
-
+path = 'main.log'
 
 def names_create():
     for contact in contacts_list[1:]:
@@ -23,7 +24,7 @@ def names_create():
 
     return
 
-
+@logger2(path)
 def phone_number_format(contact):
     phone_pattern = re.compile(
         r'(\+7|8)?\s*\(?(\d{3})\)?\s*\D?(\d{3})[-\s+]?(\d{2})-?(\d{2})((\s)?\(?(доб.)?\s?(\d+)\)?)?')
@@ -62,6 +63,8 @@ def create_unique():
 
 
 if __name__ == '__main__':
+    if os.path.exists(path):
+        os.remove(path)
     with open("phonebook_raw.csv", 'r', encoding='utf-8') as f:
         rows = csv.reader(f, delimiter=",")
         contacts_list = list(rows)
@@ -69,7 +72,6 @@ if __name__ == '__main__':
         names_create()
         duplicate_fill()
         create_unique()
-        pprint(new_list)
 
     with open("phonebook.csv", "w", encoding='utf-8') as f:
         datawriter = csv.writer(f, delimiter=',')
